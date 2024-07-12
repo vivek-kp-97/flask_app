@@ -1,21 +1,19 @@
-# Use an Alpine Linux base image
-FROM alpine:3.5
+# start by pulling the python image
+FROM python:3.8-alpine
 
-# Install Python and pip
-RUN apk add --update py2-pip
-RUN pip install --upgrade pip
+# copy the requirements file into the image
+COPY ./requirements.txt /app/requirements.txt
 
-# Install Python modules needed by the app
-COPY requirements.txt /usr/src/app/
-RUN pip install --no-cache-dir -r /usr/src/app/requirements.txt
+# switch working directory
+WORKDIR /app
 
-# Copy app files
-COPY app.py /usr/src/app/
-COPY templates/index.html /usr/src/app/templates/
+# install the dependencies and packages in the requirements file
+RUN pip install -r requirements.txt
 
-# Expose port 5000
-EXPOSE 5000
+# copy every content from the local file to the image
+COPY . /app
 
-# Run the application
-CMD ["python", "/usr/src/app/run.py"]
+# configure the container to run in an executed manner
+ENTRYPOINT [ "python" ]
 
+CMD ["run.py"]
