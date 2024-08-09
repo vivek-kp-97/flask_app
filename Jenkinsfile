@@ -10,11 +10,13 @@ pipeline{
         }
         stage("Build"){
             steps{
+		echo "Image Build Started"
                 sh "docker build -t flask-app ."
             }
         }
-        stage("Push Build"){
+        stage("Push Image"){
             steps{
+		echo "Image Push Started"
                 withCredentials([usernamePassword(credentialsId:"Dockerhub",passwordVariable:"dockerhubPass",usernameVariable:"dockerhubUsername")]){
                     sh "docker login -u ${env.dockerhubUsername} -p ${env.dockerhubPass}"
                     sh "docker tag flask-app:latest ${env.dockerhubUsername}/flask-app:latest"
@@ -24,6 +26,7 @@ pipeline{
         }
         stage("Deploy"){
             steps{
+		echo "Deployment Started"
                 sh "docker compose down && docker compose up -d"
             }
         }
