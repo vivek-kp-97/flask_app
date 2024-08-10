@@ -1,0 +1,28 @@
+stages:
+    - build
+    - push
+    - deploy
+
+build_job:
+    stage: build
+    script: 
+        - whoami
+        - docker build -t flaskapp:latest .
+    tags:
+        - dev
+
+push_job:
+    stage: push
+    script:
+        - docker login -u $DOCKERHUB_USER -p $DOCKERHUB_PASS
+        - docker image tag flaskapp:latest $DOCKERHUB_USER/flaskapp:latest
+        - docker push $DOCKERHUB_USER/flaskapp:latest
+    tags:
+        - dev
+
+deploy_job:
+    stage: deploy
+    script: 
+        - docker compose up -d
+    tags:
+        - dev
